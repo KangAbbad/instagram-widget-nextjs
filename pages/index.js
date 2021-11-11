@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChipIcon } from '@heroicons/react/solid';
 import axios from 'axios';
 
