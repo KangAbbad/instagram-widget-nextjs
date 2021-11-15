@@ -74,7 +74,7 @@ const Authorized = (props) => {
 
 const GenerateToken = (props) => {
   const { code } = props;
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [form, setForm] = useState({
     clientId: '',
     clientSecret: '',
@@ -95,12 +95,15 @@ const GenerateToken = (props) => {
     try {
       setLoading(true);
       const getShortTokenUrl = `https://api.instagram.com/oauth/access_token`;
+      const savedClientId = localStorage.getItem('clientId');
+      const savedClientSecret = localStorage.getItem('clientSecret');
+      const savedRedirectUri = localStorage.getItem('redirectUri');
       const formData = new FormData();
-      formData.append('client_id', form.clientId);
-      formData.append('client_secret', form.clientSecret);
-      formData.append('redirect_uri', form.redirectUri);
+      formData.append('client_id', savedClientId);
+      formData.append('client_secret', savedClientSecret);
+      formData.append('redirect_uri', savedRedirectUri);
       formData.append('grant_type', 'authorization_code');
-      formData.append('code', form.authCode);
+      formData.append('code', code);
       const { data: shortLivedTokenResponse } = await axios.post(getShortTokenUrl, formData);
       const shortLivedToken = shortLivedTokenResponse.access_token;
 
@@ -108,7 +111,7 @@ const GenerateToken = (props) => {
       const { data: longLivedTokenResponse } = await axios.get(getLongTokenUrl, {
         params: {
           grant_type: 'ig_exchange_token',
-          client_secret: form.clientSecret,
+          client_secret: savedClientSecret,
           access_token: shortLivedToken,
         },
       });
@@ -122,25 +125,12 @@ const GenerateToken = (props) => {
   };
 
   useEffect(() => {
-    const savedClientId = localStorage.getItem('clientId');
-    const savedClientSecret = localStorage.getItem('clientSecret');
-    const savedRedirectUri = localStorage.getItem('redirectUri');
-    if (savedClientSecret) {
-      onChangeForm(`clientSecret`, savedClientSecret);
-    }
-    if (savedClientId) {
-      onChangeForm(`clientId`, savedClientId);
-    }
-    if (savedRedirectUri) {
-      onChangeForm(`redirectUri`, savedRedirectUri);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (form.clientId && form.clientSecret && form.redirectUri && code) {
+    if (code) {
       onGetToken();
+    } else {
+      setLoading(false);
     }
-  }, [form.clientId, form.clientSecret, form.redirectUri, code]);
+  }, [code]);
 
   return (
     <div className="container mx-auto">
