@@ -36,7 +36,7 @@ const Authorized = (props) => {
   
   const onCopyToken = () => {
     setCopied(true);
-    navigator.clipboard.writeText(longLivedToken);
+    navigator.clipboard.writeText(token);
     setTimeout(() => {
       setCopied(false);
     }, 3000);

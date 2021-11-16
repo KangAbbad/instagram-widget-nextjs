@@ -1,7 +1,6 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import axios from "axios";
-import Joi from "joi";
-import validate from "~/lib/middlewares/validate";
+import axios from 'axios';
+import Joi from 'joi';
+import validate from '~/lib/middlewares/validate';
 
 const schema = Joi.object({
   client_id: Joi.string().required(),
@@ -24,7 +23,7 @@ export default validate({ body: schema }, async (req, res) => {
           data: body,
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        res.json({
+        res.status(200).json({
           status: 200,
           data: response.data,
           error_message: '',
@@ -38,7 +37,7 @@ export default validate({ body: schema }, async (req, res) => {
           headers: {},
           config: {},
         };
-    
+
         if (error.response) {
           resError.status = error.response.status;
           resError.data = error.response.data;
@@ -48,14 +47,14 @@ export default validate({ body: schema }, async (req, res) => {
         } else {
           resError.message = error.message;
         }
-    
+
         resError.config = error.config;
     
-        res.json(resError);
+        res.status(400).json(resError);
       }
       break;
     default:
-      res.status(405).json({ status: 405, data: {}, error_message: 'Method Not Allowed!' });
+      res.status(400).json({ status: 405, data: {}, error_message: 'Method Not Allowed!' });
       break;
   }
 });
