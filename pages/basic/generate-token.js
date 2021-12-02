@@ -12,7 +12,7 @@ const Unauthorize = () => {
   const router = useRouter();
 
   const onLogin = async () => {
-    router.push(`/basic/auth`);
+    router.push('/basic/auth');
   };
 
   return (
@@ -75,39 +75,25 @@ const Authorized = (props) => {
 const GenerateToken = (props) => {
   const { code } = props;
   const [isLoading, setLoading] = useState(true);
-  const [form, setForm] = useState({
-    clientId: '',
-    clientSecret: '',
-    redirectUri: '',
-    authCode: code,
-    shortLivedToken: '',
-    longLivedToken: '',
-  });
-
-  const onChangeForm = (key, value) => {
-    setForm((ps) => ({
-      ...ps,
-      [key]: value,
-    }));
-  };
+  const [longLivedToken, setLongLivedToken] = useState('');
 
   const onGetToken = async () => {
     try {
       setLoading(true);
-      const getShortTokenUrl = `https://api.instagram.com/oauth/access_token`;
+      const getShortTokenUrl = 'https://api.instagram.com/oauth/access_token';
       const savedClientId = localStorage.getItem('clientId');
       const savedClientSecret = localStorage.getItem('clientSecret');
-      const savedRedirectUri = localStorage.getItem('redirectUri');
+      const redirectUri = 'https://instagram-widget-nextjs.vercel.app/basic/generate-token';
       const formData = new FormData();
       formData.append('client_id', savedClientId);
       formData.append('client_secret', savedClientSecret);
-      formData.append('redirect_uri', savedRedirectUri);
+      formData.append('redirect_uri', redirectUri);
       formData.append('grant_type', 'authorization_code');
       formData.append('code', code);
       const { data: shortLivedTokenResponse } = await axios.post(getShortTokenUrl, formData);
       const shortLivedToken = shortLivedTokenResponse.access_token;
 
-      const getLongTokenUrl = `https://graph.instagram.com/access_token`;
+      const getLongTokenUrl = 'https://graph.instagram.com/access_token';
       const { data: longLivedTokenResponse } = await axios.get(getLongTokenUrl, {
         params: {
           grant_type: 'ig_exchange_token',
@@ -115,11 +101,11 @@ const GenerateToken = (props) => {
           access_token: shortLivedToken,
         },
       });
-      onChangeForm('longLivedToken', longLivedTokenResponse.access_token);
+      setLongLivedToken(longLivedTokenResponse.access_token);
       setLoading(false);
     } catch (error) {
       console.error(error);
-      onChangeForm('longLivedToken', '');
+      setLongLivedToken('');
       setLoading(false);
     }
   };
@@ -150,7 +136,7 @@ const GenerateToken = (props) => {
             </div>
           ) : (
             <>
-              {form.longLivedToken ? <Authorized token={form.longLivedToken} /> : <Unauthorize />}
+              {longLivedToken ? <Authorized token={longLivedToken} /> : <Unauthorize />}
             </>
           )}
         </div>
@@ -164,7 +150,7 @@ export default GenerateToken;
 export async function getServerSideProps({ query }) {
   return {
     props: {
-      code: query.code ?? ``,
+      code: query.code ?? '',
     },
   };
 };
