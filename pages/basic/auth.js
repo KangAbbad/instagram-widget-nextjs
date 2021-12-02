@@ -28,8 +28,7 @@ const Auth = () => {
       });
       const redirectUri = `https://instagram-widget-nextjs.vercel.app/basic/generate-token`;
       const url = `https://api.instagram.com/oauth/authorize?client_id=${form.clientId}&redirect_uri=${redirectUri}&scope=user_media,user_profile&response_type=code`;
-      // location.replace(url);
-      window.open(url);
+      location.href = url;
     }
   };
 
