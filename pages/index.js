@@ -5,7 +5,7 @@ const Home = () => {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/auth')
+    router.replace('/basic/auth');
   }, []);
 
   return null;

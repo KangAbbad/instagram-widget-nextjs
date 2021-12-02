@@ -12,7 +12,7 @@ const Unauthorize = () => {
   const router = useRouter();
 
   const onLogin = async () => {
-    router.push(`/auth`);
+    router.push(`/basic/auth`);
   };
 
   return (

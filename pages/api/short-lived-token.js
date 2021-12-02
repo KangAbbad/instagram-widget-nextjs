@@ -1,60 +1,36 @@
 import axios from 'axios';
-import Joi from 'joi';
-import validate from '~/lib/middlewares/validate';
 
-const schema = Joi.object({
-  client_id: Joi.string().required(),
-  client_secret: Joi.string().required(),
-  redirect_uri: Joi.string().required(),
-  grant_type: Joi.string().required(),
-  code: Joi.string().required(),
-});
-
-export default validate({ body: schema }, async (req, res) => {
+export default async (req, res) => {
   const { method, body } = req;
-  
+  const url = `https://api.instagram.com/oauth/access_token`;
+
   switch (method) {
     case 'POST':
       try {
-        const url = `https://api.instagram.com/oauth/access_token`;
-        const response = await axios({
-          method: 'post',
+        const response = await axios.post(
           url,
-          data: body,
-          headers: { 'Content-Type': 'multipart/form-data' },
+          {
+            client_id: body.client_id,
+            client_secret: body.client_secret,
+            redirect_uri: body.redirect_uri,
+            grant_type: 'authorization_code',
+            code: body.code,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        console.log(response);
+        res.send({
+          body,
+          response
         });
-        res.status(200).json({
-          status: 200,
-          data: response.data,
-          error_message: '',
-        });
-      } catch (error) {
-        const resError = {
-          status: 0,
-          data: {},
-          message: '',
-          request: {},
-          headers: {},
-          config: {},
-        };
-
-        if (error.response) {
-          resError.status = error.response.status;
-          resError.data = error.response.data;
-          resError.headers = error.response.headers;
-        } else if (error.request) {
-          resError.headers = error.request;
-        } else {
-          resError.message = error.message;
-        }
-
-        resError.config = error.config;
-    
-        res.status(400).json(resError);
-      }
+      } catch (e) {}
       break;
     default:
-      res.status(400).json({ status: 405, data: {}, error_message: 'Method Not Allowed!' });
+      res.status(405).json({ status: 405, data: {}, error_message: 'Method Not Allowed!' });
       break;
   }
-});
+}

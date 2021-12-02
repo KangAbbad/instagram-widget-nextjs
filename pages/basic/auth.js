@@ -10,7 +10,6 @@ const Auth = () => {
   const [form, setForm] = useState({
     clientId: '',
     clientSecret: '',
-    redirectUri: '',
   });
 
   const isValidate = Object.values(form).every((value) => value);
@@ -27,23 +26,20 @@ const Auth = () => {
       Object.entries(form).forEach(([key, value]) => {
         localStorage.setItem(key, value);
       });
-      const url = `https://api.instagram.com/oauth/authorize?client_id=${form.clientId}&redirect_uri=${form.redirectUri}&scope=user_media,user_profile&response_type=code`;
-      window.open(url);
+      const redirectUri = `${window.origin}/basic/generate-token`;
+      const url = `https://api.instagram.com/oauth/authorize?client_id=${form.clientId}&redirect_uri=${redirectUri}&scope=user_media,user_profile&response_type=code`;
+      location.replace(url);
     }
   };
 
   useEffect(() => {
     const savedClientId = localStorage.getItem('clientId');
     const savedClientSecret = localStorage.getItem('clientSecret');
-    const savedRedirectUri = localStorage.getItem('redirectUri');
     if (savedClientSecret) {
       onChangeForm(`clientSecret`, savedClientSecret);
     }
     if (savedClientId) {
       onChangeForm(`clientId`, savedClientId);
-    }
-    if (savedRedirectUri) {
-      onChangeForm(`redirectUri`, savedRedirectUri);
     }
   }, []);
 
@@ -70,12 +66,6 @@ const Auth = () => {
               placeholder="Client Secret"
               value={form.clientSecret}
               onChange={(e) => onChangeForm('clientSecret', e.target.value)}
-            />
-
-            <Input
-              placeholder="Redirect Uri"
-              value={form.redirectUri}
-              onChange={(e) => onChangeForm('redirectUri', e.target.value)}
             />
           </div>
           <Button disabled={!isValidate} className="group w-full mt-5" onClick={onSubmit}>
