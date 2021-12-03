@@ -80,25 +80,26 @@ const GenerateToken = (props) => {
   const onGetToken = async () => {
     try {
       setLoading(true);
-      const getShortTokenUrl = 'https://api.instagram.com/oauth/access_token';
-      const savedBasicClientId = localStorage.getItem('basicClientId');
-      const savedBasicClientSecret = localStorage.getItem('basicClientSecret');
-      const redirectUri = 'https://instagram-widget-nextjs.vercel.app/basic/generate-token';
-      const formData = new FormData();
-      formData.append('client_id', savedBasicClientId);
-      formData.append('client_secret', savedBasicClientSecret);
-      formData.append('redirect_uri', redirectUri);
-      formData.append('grant_type', 'authorization_code');
-      formData.append('code', code);
-      const { data: shortLivedTokenResponse } = await axios.post(getShortTokenUrl, formData);
-      const shortLivedToken = shortLivedTokenResponse.access_token;
+      const baseUrl = 'https://graph.facebook.com/v12.0/oauth/access_token';
+      const savedBusinessClientId = localStorage.getItem('businessClientId');
+      const savedBusinessClientSecret = localStorage.getItem('businessClientSecret');
+      const encodedRedirectUri = 'https%3A%2F%2Finstagram-widget-nextjs.vercel.app%2Fbusiness%2Fgenerate-token%2F';
 
-      const getLongTokenUrl = 'https://graph.instagram.com/access_token';
-      const { data: longLivedTokenResponse } = await axios.get(getLongTokenUrl, {
+      const { data: shortLivedTokenResponse } = await axios.get(baseUrl, {
         params: {
-          grant_type: 'ig_exchange_token',
-          client_secret: savedBasicClientSecret,
-          access_token: shortLivedToken,
+          client_id: savedBusinessClientId,
+          client_secret: savedBusinessClientSecret,
+          redirect_uri: encodedRedirectUri,
+          code,
+        },
+      });
+
+      const { data: longLivedTokenResponse } = await axios.get(baseUrl, {
+        params: {
+          client_id: savedBusinessClientId,
+          client_secret: savedBusinessClientSecret,
+          grant_type: 'fb_exchange_token',
+          fb_exchange_token: shortLivedTokenResponse.access_token,
         },
       });
       setLongLivedToken(longLivedTokenResponse.access_token);

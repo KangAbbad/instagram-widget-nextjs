@@ -23,22 +23,22 @@ const Auth = () => {
 
   const onSubmit = async () => {
     if (isValidate) {
-      localStorage.setItem('basicClientId', form.clientId);
-      localStorage.setItem('basicClientSecret', form.clientSecret);
-      const redirectUri = `https://instagram-widget-nextjs.vercel.app/basic/generate-token`;
-      const url = `https://api.instagram.com/oauth/authorize?client_id=${form.clientId}&redirect_uri=${redirectUri}&scope=user_media,user_profile&response_type=code`;
+      localStorage.setItem('businessClientId', form.clientId);
+      localStorage.setItem('businessClientSecret', form.clientSecret);
+      const encodedRedirectUri = 'https%3A%2F%2Finstagram-widget-nextjs.vercel.app%2Fbusiness%2Fgenerate-token%2F';
+      const url = `https://www.facebook.com/v12.0/dialog/oauth?client_id=${form.clientId}&redirect_uri=${encodedRedirectUri}&state=1738`;
       location.href = url;
     }
   };
 
   useEffect(() => {
-    const savedBasicClientId = localStorage.getItem('basicClientId');
-    const savedBasicClientSecret = localStorage.getItem('basicClientSecret');
-    if (savedBasicClientSecret) {
-      onChangeForm(`clientSecret`, savedBasicClientSecret);
+    const savedBusinessClientId = localStorage.getItem('businessClientId');
+    const savedBusinessClientSecret = localStorage.getItem('businessClientSecret');
+    if (savedBusinessClientSecret) {
+      onChangeForm(`clientSecret`, savedBusinessClientSecret);
     }
-    if (savedBasicClientId) {
-      onChangeForm(`clientId`, savedBasicClientId);
+    if (savedBusinessClientId) {
+      onChangeForm(`clientId`, savedBusinessClientId);
     }
   }, []);
 
@@ -71,7 +71,7 @@ const Auth = () => {
             <span className="absolute left-0 inset-y-0 flex items-center pl-3">
               <ChipIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
             </span>
-            Login
+            Facebook Login
           </Button>
         </div>
       </div>
