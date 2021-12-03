@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChipIcon } from '@heroicons/react/solid';
+import axios from 'axios';
 
 import styles from '~/styles/auth.module.css';
 
@@ -10,9 +11,11 @@ const Auth = () => {
   const [form, setForm] = useState({
     clientId: '',
     clientSecret: '',
+    state: '',
   });
 
-  const isValidate = Object.values(form).every((value) => value);
+  const { state, ...restForm } = form;
+  const isValidate = Object.values(restForm).every((value) => value);
 
   const onChangeForm = (key, value) => {
     setForm((ps) => ({
@@ -23,11 +26,18 @@ const Auth = () => {
 
   const onSubmit = async () => {
     if (isValidate) {
+      const url = '/api/business/auth'; 
       localStorage.setItem('businessClientId', form.clientId);
       localStorage.setItem('businessClientSecret', form.clientSecret);
-      const encodedRedirectUri = 'https%3A%2F%2Finstagram-widget-nextjs.vercel.app%2Fbusiness%2Fgenerate-token%2F';
-      const url = `https://www.facebook.com/v12.0/dialog/oauth?client_id=${form.clientId}&redirect_uri=${encodedRedirectUri}&state=1738`;
-      location.href = url;
+
+      const { data: response } = await axios.get(url, {
+        params: {
+          clientId: form.clientId,
+          redirectUri: 'https://instagram-widget-nextjs.vercel.app/business/generate-token',
+          state: form.state || `1738`,
+        }
+      });
+      location.href = response.data.url;
     }
   };
 
@@ -65,6 +75,12 @@ const Auth = () => {
               placeholder="Client Secret"
               value={form.clientSecret}
               onChange={(e) => onChangeForm('clientSecret', e.target.value)}
+            />
+
+            <Input
+              placeholder="State (Optional)"
+              value={form.state}
+              onChange={(e) => onChangeForm('state', e.target.value)}
             />
           </div>
           <Button disabled={!isValidate} className="group w-full mt-5" onClick={onSubmit}>

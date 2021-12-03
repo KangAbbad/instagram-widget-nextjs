@@ -80,30 +80,33 @@ const GenerateToken = (props) => {
   const onGetToken = async () => {
     try {
       setLoading(true);
-      const baseUrl = 'https://graph.facebook.com/v12.0/oauth/access_token';
+      const url = '/api/business/short-lived-token';
       const savedBusinessClientId = localStorage.getItem('businessClientId');
       const savedBusinessClientSecret = localStorage.getItem('businessClientSecret');
-      const redirectUri = 'https://instagram-widget-nextjs.vercel.app/business/generate-token/';
+      const redirectUri = 'https://instagram-widget-nextjs.vercel.app/business/generate-token';
+      // const redirectUri = 'https://instagram-widget-nextjs.vercel.app/business/generate-token/';
+      // const redirectUri = 'https%3A%2F%2Finstagram-widget-nextjs.vercel.app%2Fbusiness%2Fgenerate-token';
 
-      const { data: shortLivedTokenResponse } = await axios.get(baseUrl, {
+      const { data: shortLivedTokenResponse } = await axios.get(url, {
         params: {
-          client_id: savedBusinessClientId,
-          client_secret: savedBusinessClientSecret,
-          redirect_uri: redirectUri,
+          clientId: savedBusinessClientId,
+          clientSecret: savedBusinessClientSecret,
+          redirectUri: redirectUri,
           code,
         },
       });
 
-      const { data: longLivedTokenResponse } = await axios.get(baseUrl, {
-        params: {
-          client_id: savedBusinessClientId,
-          client_secret: savedBusinessClientSecret,
-          grant_type: 'fb_exchange_token',
-          fb_exchange_token: shortLivedTokenResponse.access_token,
-        },
-      });
+      // const { data: longLivedTokenResponse } = await axios.get(baseUrl, {
+      //   params: {
+      //     client_id: savedBusinessClientId,
+      //     client_secret: savedBusinessClientSecret,
+      //     grant_type: 'fb_exchange_token',
+      //     fb_exchange_token: shortLivedTokenResponse.access_token,
+      //   },
+      // });
 
-      setLongLivedToken(longLivedTokenResponse.access_token);
+      // setLongLivedToken(longLivedTokenResponse.access_token);
+      setLongLivedToken(shortLivedTokenResponse.data.access_token);
       setLoading(false);
     } catch (error) {
       console.error(error);
