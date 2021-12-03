@@ -113,11 +113,12 @@ const GenerateToken = (props) => {
   };
 
   useEffect(() => {
-    if (code) {
-      onGetToken();
-    } else {
-      setLoading(false);
-    }
+    // if (code) {
+    //   onGetToken();
+    // } else {
+    //   setLoading(false);
+    // }
+    console.log(code);
   }, [code]);
 
   return (
