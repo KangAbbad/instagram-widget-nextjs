@@ -80,20 +80,20 @@ const GenerateToken = (props) => {
   const onGetToken = async () => {
     try {
       setLoading(true);
-      const baseUrl = 'https://graph.facebook.com/v12.0/oauth/access_token';
       const savedBusinessClientId = localStorage.getItem('businessClientId');
       const savedBusinessClientSecret = localStorage.getItem('businessClientSecret');
-      // const encodedRedirectUri = 'https%3A%2F%2Finstagram-widget-nextjs.vercel.app%2Fbusiness%2Fgenerate-token%2F';
-      const encodedRedirectUri = 'https://instagram-widget-nextjs.vercel.app/business/generate-token';
+      const encodedRedirectUri = 'https%3A%2F%2Finstagram-widget-nextjs.vercel.app%2Fbusiness%2Fgenerate-token%2F';
+      const url = `https://graph.facebook.com/v12.0/oauth/access_token?client_id=${savedBusinessClientId}&client_secret=${savedBusinessClientSecret}&code=${code}&redirect_uri=${encodedRedirectUri}`;
 
-      const { data: shortLivedTokenResponse } = await axios.get(baseUrl, {
-        params: {
-          client_id: savedBusinessClientId,
-          client_secret: savedBusinessClientSecret,
-          redirect_uri: encodedRedirectUri,
-          code,
-        },
-      });
+      const { data: shortLivedTokenResponse } = await axios.get(url);
+      // const { data: shortLivedTokenResponse } = await axios.get(baseUrl, {
+      //   params: {
+      //     client_id: savedBusinessClientId,
+      //     client_secret: savedBusinessClientSecret,
+      //     redirect_uri: encodedRedirectUri,
+      //     code,
+      //   },
+      // });
 
       // const { data: longLivedTokenResponse } = await axios.get(baseUrl, {
       //   params: {
@@ -113,12 +113,11 @@ const GenerateToken = (props) => {
   };
 
   useEffect(() => {
-    // if (code) {
-    //   onGetToken();
-    // } else {
-    //   setLoading(false);
-    // }
-    console.log(code);
+    if (code) {
+      onGetToken();
+    } else {
+      setLoading(false);
+    }
   }, [code]);
 
   return (
