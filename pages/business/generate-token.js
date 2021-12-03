@@ -82,16 +82,12 @@ const GenerateToken = (props) => {
       setLoading(true);
       const savedBusinessClientId = localStorage.getItem('businessClientId');
       const savedBusinessClientSecret = localStorage.getItem('businessClientSecret');
-      const redirectUri = 'https://instagram-widget-nextjs.vercel.app/business/generate-token';
-      // const redirectUri = 'https://instagram-widget-nextjs.vercel.app/business/generate-token/';
-      // const redirectUri = 'https%3A%2F%2Finstagram-widget-nextjs.vercel.app%2Fbusiness%2Fgenerate-token';
 
       const shortLivedTokenUrl = '/api/business/short-lived-token';
       const { data: shortLivedTokenResponse } = await axios.get(shortLivedTokenUrl, {
         params: {
           clientId: savedBusinessClientId,
           clientSecret: savedBusinessClientSecret,
-          redirectUri: redirectUri,
           code,
         },
       });

@@ -6,13 +6,13 @@ import validate from '~/lib/middlewares/validate';
 const schema = Joi.object({
   clientId: Joi.string().required(),
   clientSecret: Joi.string().required(),
-  redirectUri: Joi.string().required(),
   code: Joi.string().required(),
 });
 
 export default validate({ query: schema }, async (req, res) => {
   const { method, query } = req;
-  const { clientId, clientSecret, redirectUri, code } = query;
+  const { clientId, clientSecret, code } = query;
+  const redirectUri = 'https://instagram-widget-nextjs.vercel.app/business/generate-token';
 
   switch (method) {
     case 'GET':
