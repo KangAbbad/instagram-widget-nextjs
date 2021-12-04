@@ -71,7 +71,7 @@ const Auth = () => {
             <span className="absolute left-0 inset-y-0 flex items-center pl-3">
               <ChipIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
             </span>
-            Login
+            Instagram Login
           </Button>
         </div>
       </div>

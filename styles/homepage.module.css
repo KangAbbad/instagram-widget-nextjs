@@ -1,0 +1,5 @@
+.homepage-title {
+  @apply text-5xl;
+
+  font-family: 'Oleo Script', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif, cursive;
+}
