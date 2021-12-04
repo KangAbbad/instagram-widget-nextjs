@@ -86,8 +86,8 @@ const GenerateToken = (props) => {
       const shortLivedTokenUrl = '/api/business/short-lived-token';
       const { data: shortLivedTokenResponse } = await axios.get(shortLivedTokenUrl, {
         params: {
-          client_id: savedBusinessClientId,
-          client_secret: savedBusinessClientSecret,
+          clientId: savedBusinessClientId,
+          clientSecret: savedBusinessClientSecret,
           code,
         },
       });
@@ -95,9 +95,9 @@ const GenerateToken = (props) => {
       const longLivedTokenUrl = '/api/business/long-lived-token';
       const { data: longLivedTokenResponse } = await axios.get(longLivedTokenUrl, {
         params: {
-          client_id: savedBusinessClientId,
-          client_secret: savedBusinessClientSecret,
-          access_token: shortLivedTokenResponse.data.access_token,
+          clientId: savedBusinessClientId,
+          clientSecret: savedBusinessClientSecret,
+          accessToken: shortLivedTokenResponse.data.access_token,
         },
       });
 

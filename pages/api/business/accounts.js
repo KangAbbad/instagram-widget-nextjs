@@ -15,7 +15,7 @@ export default validate({ query: schema }, async (req, res) => {
     case 'GET':
       try {
         const baseUrl = 'https://graph.facebook.com/v12.0/me/accounts';
-        const { data: response } = await axios.get(baseUrl, {
+        const response = await axios.get(baseUrl, {
           params: {
             access_token: accessToken,
           },
