@@ -5,19 +5,21 @@ import validate from '~/lib/middlewares/validate';
 
 const schema = Joi.object({
   accessToken: Joi.string().required(),
+  fields: Joi.string(),
 });
 
 export default validate({ query: schema }, async (req, res) => {
   const { method, query } = req;
-  const { accessToken } = query;
+  const { accessToken, fields } = query;
 
   switch (method) {
     case 'GET':
       try {
-        const baseUrl = 'https://graph.facebook.com/v12.0/me/accounts';
-        const response = await axios.get(baseUrl, {
+        const baseUrl = 'https://graph.facebook.com/v12.0/me';
+        const { data: response } = await axios.get(baseUrl, {
           params: {
             access_token: accessToken,
+            fields: fields || 'id,name,first_name,last_name,short_name,email,accounts',
           },
         });
         res.status(200).json({
