@@ -80,7 +80,6 @@ const GenerateToken = (props) => {
   const onGetToken = async () => {
     try {
       setLoading(true);
-      const getShortTokenUrl = 'https://api.instagram.com/oauth/access_token';
       const savedBasicClientId = localStorage.getItem('basicClientId');
       const savedBasicClientSecret = localStorage.getItem('basicClientSecret');
       const redirectUri = 'https://instagram-widget-nextjs.vercel.app/basic/generate-token';
@@ -90,6 +89,8 @@ const GenerateToken = (props) => {
       formData.append('redirect_uri', redirectUri);
       formData.append('grant_type', 'authorization_code');
       formData.append('code', code);
+
+      const getShortTokenUrl = 'https://api.instagram.com/oauth/access_token';
       const { data: shortLivedTokenResponse } = await axios.post(getShortTokenUrl, formData);
       const shortLivedToken = shortLivedTokenResponse.access_token;
 
