@@ -3,10 +3,24 @@ import { ChipIcon, DuplicateIcon } from '@heroicons/react/solid';
 import { useRouter } from 'next/router';
 import Loader from "react-loader-spinner";
 import axios from 'axios';
+import classNames from 'classnames';
 
 import styles from '~/styles/auth.module.css';
 
 import Button from '~/components/Button';
+
+const Card = (props) => {
+  return (
+    <div
+      className={classNames(
+        'border border-[#EAEAEA] rounded-lg shadow-lg w-full max-w-[500px] p-4',
+        props.className,
+      )}
+    >
+      {props.children}
+    </div>
+  );
+};
 
 const Unauthorize = () => {
   const router = useRouter();
@@ -20,7 +34,7 @@ const Unauthorize = () => {
       <h1 className="text-xl text-red-500 text-center">
         Please login to your Instagram account first<br />before generate the token!
       </h1>
-      <Button className="group w-full mt-5" onClick={onLogin}>
+      <Button className="bg-indigo-600 hover:bg-indigo-700 focus:ring-1 focus:ring-offset-1 focus:ring-indigo-500 group w-full mt-5" onClick={onLogin}>
         <span className="absolute left-0 inset-y-0 flex items-center pl-3">
           <ChipIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
         </span>
@@ -44,7 +58,7 @@ const Authorized = (props) => {
 
   return (
     <div className="flex flex-col items-center justify-center mt-5">
-      <div className="border border-[#EAEAEA] rounded-lg shadow-lg w-full max-w-[500px] p-4">
+      <Card>
         <p>
           Get your token here!
         </p>
@@ -56,7 +70,7 @@ const Authorized = (props) => {
           </div>
           <div className="flex-none">
             <div className="relative">
-              <Button className="h-[40px]" onClick={onCopyToken}>
+              <Button className="bg-indigo-600 hover:bg-indigo-700 focus:ring-1 focus:ring-offset-1 focus:ring-indigo-500 h-[40px]" onClick={onCopyToken}>
                 <DuplicateIcon className="h-5 w-5 text-[#FFFFFF]" aria-hidden="true" />
               </Button>
               {isCopied && (
@@ -67,19 +81,21 @@ const Authorized = (props) => {
             </div>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };
 
 const GenerateToken = (props) => {
   const { code } = props;
-  const [isLoading, setLoading] = useState(true);
-  const [longLivedToken, setLongLivedToken] = useState('');
+  const [isLongLivedTokenLoading, setLongLivedTokenLoading] = useState(false);
+  const [isBusinessAccountsLoading, setBusinessAccountsLoading] = useState(false);
+  const [longLivedToken, setLongLivedToken] = useState('EAAMr2YTu9J8BAD3ZBiyhMQX3mKxdCJLdsFOY7roataN8XBIsWdyZBoQOh75bSeaS5caJC6o4xpR7IswzZCHKiqZC2EVwcZBUuwPZBFpMOWHtZCZAhtNL7JHepX1aGPe6uixZCx8FhMVIIqd3YUs73e7ZAR6J99I3yIW42VBFZAktMZBHYHZBsSyAJ99Vs');
+  const [businessAccounts, setBusinessAccounts] = useState([]);
 
   const onGetToken = async () => {
     try {
-      setLoading(true);
+      setLongLivedTokenLoading(true);
       const savedBusinessClientId = localStorage.getItem('businessClientId');
       const savedBusinessClientSecret = localStorage.getItem('businessClientSecret');
 
@@ -102,26 +118,79 @@ const GenerateToken = (props) => {
       });
 
       setLongLivedToken(longLivedTokenResponse.data.access_token);
-      setLoading(false);
+      setLongLivedTokenLoading(false);
     } catch (error) {
       console.error(error);
       setLongLivedToken('');
-      setLoading(false);
+      setLongLivedTokenLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (code) {
-      onGetToken();
-    } else {
-      setLoading(false);
+  const onGetBusinessAccounts = async () => {
+    try {
+      setBusinessAccountsLoading(true);
+      const { data: response } = await axios.get('/api/business/accounts', {
+        params: {
+          accessToken: longLivedToken,
+        },
+      });
+      const accounts = response.data.accounts.data.map((account) => ({
+        ...account,
+        instagram_business_account_id: '-',
+      }));
+      setBusinessAccounts(accounts);
+      setBusinessAccountsLoading(false);
+    } catch (error) {
+      console.error(error);
+      setBusinessAccounts([]);
+      setBusinessAccountsLoading(false);
     }
-  }, [code]);
+  };
+
+  const onGetIgBusinessId = async (id) => {
+    try {
+      const { data: response } = await axios.get('/api/business/connected-ig', {
+        params: {
+          businessPageId: id,
+          accessToken: longLivedToken,
+        },
+      });
+      const igBusinessId = response.data.instagram_business_account.id;
+      const indexOfAccountId = businessAccounts.map((account) => account.id).indexOf(id);
+      const copyBusinessAccounts = [...businessAccounts];
+      copyBusinessAccounts[indexOfAccountId].instagram_business_account_id = igBusinessId;
+      setBusinessAccounts(copyBusinessAccounts);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // useEffect(() => {
+  //   if (code) {
+  //     onGetToken();
+  //   } else {
+  //     setLongLivedTokenLoading(false);
+  //   }
+  // }, [code]);
+
+  useEffect(() => {
+    if (longLivedToken) {
+      onGetBusinessAccounts();
+    }
+  }, [longLivedToken]);
+
+  useEffect(() => {
+    if (businessAccounts.length) {
+      businessAccounts.map((account) => {
+        onGetIgBusinessId(account.id);
+      });
+    }
+  }, [businessAccounts.length]);
 
   return (
     <div className="container mx-auto">
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="border border-[#EAEAEA] rounded-lg shadow-lg w-full max-w-[500px] p-4">
+      <div className="flex flex-col items-center justify-center min-h-screen py-5">
+        <Card>
           <div className="text-center">
             <h1 className={styles['auth-title']}>
               Instagram
@@ -130,7 +199,7 @@ const GenerateToken = (props) => {
               Generate Token
             </h2>
           </div>
-          {isLoading ? (
+          {isLongLivedTokenLoading ? (
             <div className="flex justify-center mt-6 mb-3">
               <Loader type="Oval" color="#00BFFF" height={60} width={60} />
             </div>
@@ -139,7 +208,25 @@ const GenerateToken = (props) => {
               {longLivedToken ? <Authorized token={longLivedToken} /> : <Unauthorize />}
             </>
           )}
-        </div>
+        </Card>
+        {businessAccounts.length > 0 && businessAccounts.map((account, accountIndex) => {
+          return (
+            <Card key={accountIndex} className="mt-5">
+              <h1 className="text-xl mb-2">
+                {account.name}
+              </h1>
+              <p className="text-sm">
+                Category: {account.category}
+              </p>
+              <p className="text-sm">
+                ID: {account.id}
+              </p>
+              <p className="text-sm truncate">
+                IG Business Account ID: {account.instagram_business_account_id}
+              </p>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );
