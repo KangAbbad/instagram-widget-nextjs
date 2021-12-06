@@ -20,7 +20,7 @@ const Unauthorize = () => {
       <h1 className="text-xl text-red-500 text-center">
         Please login to your Instagram account first<br />before generate the token!
       </h1>
-      <Button className="group w-full mt-5" onClick={onLogin}>
+      <Button className="bg-indigo-600 hover:bg-indigo-700 focus:ring-1 focus:ring-offset-1 focus:ring-indigo-500 group w-full mt-5" onClick={onLogin}>
         <span className="absolute left-0 inset-y-0 flex items-center pl-3">
           <ChipIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
         </span>
@@ -56,7 +56,7 @@ const Authorized = (props) => {
           </div>
           <div className="flex-none">
             <div className="relative">
-              <Button className="h-[40px]" onClick={onCopyToken}>
+              <Button className="bg-indigo-600 hover:bg-indigo-700 focus:ring-1 focus:ring-offset-1 focus:ring-indigo-500 h-[40px]" onClick={onCopyToken}>
                 <DuplicateIcon className="h-5 w-5 text-[#FFFFFF]" aria-hidden="true" />
               </Button>
               {isCopied && (

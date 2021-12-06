@@ -67,7 +67,7 @@ const Auth = () => {
               onChange={(e) => onChangeForm('clientSecret', e.target.value)}
             />
           </div>
-          <Button disabled={!isValidate} className="group w-full mt-5" onClick={onSubmit}>
+          <Button disabled={!isValidate} className="bg-indigo-600 hover:bg-indigo-700 focus:ring-1 focus:ring-offset-1 focus:ring-indigo-500 group w-full mt-5" onClick={onSubmit}>
             <span className="absolute left-0 inset-y-0 flex items-center pl-3">
               <ChipIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
             </span>

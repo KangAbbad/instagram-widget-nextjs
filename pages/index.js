@@ -28,9 +28,9 @@ const Home = () => {
             </h2>
           </div>
 
-          <div class="flex space-x-4 mt-5">
-            <div class="flex-1">
-              <Button className="shadow-lg bg-white hover:bg-white hover:border-indigo-600 focus:outline-[#EAEAEA] focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full" onClick={onGoToBasicAuth}>
+          <div className="flex space-x-4 mt-5">
+            <div className="flex-1">
+              <Button className="shadow-lg bg-white hover:bg-white focus:outline-[#EAEAEA] focus:ring-1 focus:ring-offset-2 focus:ring-indigo-500 w-full" onClick={onGoToBasicAuth}>
                 <div>
                   <p className="text-lg text-black mb-1">
                     Basic API
@@ -41,8 +41,8 @@ const Home = () => {
                 </div>
               </Button>
             </div>
-            <div class="flex-1">
-              <Button className="shadow-lg bg-white hover:bg-white hover:border-indigo-600 focus:outline-[#EAEAEA] focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full" onClick={onGoToBusinessAuth}>
+            <div className="flex-1">
+              <Button className="shadow-lg bg-white hover:bg-white focus:outline-[#EAEAEA] focus:ring-1 focus:ring-offset-2 focus:ring-indigo-500 w-full" onClick={onGoToBusinessAuth}>
                 <div>
                   <p className="text-lg text-black mb-1">
                     Business API
