@@ -90,7 +90,7 @@ const GenerateToken = (props) => {
   const { code } = props;
   const [isLongLivedTokenLoading, setLongLivedTokenLoading] = useState(false);
   const [isBusinessAccountsLoading, setBusinessAccountsLoading] = useState(false);
-  const [longLivedToken, setLongLivedToken] = useState('EAAMr2YTu9J8BAD3ZBiyhMQX3mKxdCJLdsFOY7roataN8XBIsWdyZBoQOh75bSeaS5caJC6o4xpR7IswzZCHKiqZC2EVwcZBUuwPZBFpMOWHtZCZAhtNL7JHepX1aGPe6uixZCx8FhMVIIqd3YUs73e7ZAR6J99I3yIW42VBFZAktMZBHYHZBsSyAJ99Vs');
+  const [longLivedToken, setLongLivedToken] = useState('');
   const [businessAccounts, setBusinessAccounts] = useState([]);
 
   const onGetToken = async () => {
@@ -165,13 +165,13 @@ const GenerateToken = (props) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (code) {
-  //     onGetToken();
-  //   } else {
-  //     setLongLivedTokenLoading(false);
-  //   }
-  // }, [code]);
+  useEffect(() => {
+    if (code) {
+      onGetToken();
+    } else {
+      setLongLivedTokenLoading(false);
+    }
+  }, [code]);
 
   useEffect(() => {
     if (longLivedToken) {
